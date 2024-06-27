@@ -1,8 +1,10 @@
 import os
+from datetime import datetime, timedelta, timezone
+
 from dotenv import load_dotenv
 from fastapi import HTTPException
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
-from login.loginDto import LoginDto
+from login.schema.loginDto import LoginDto
 from typing import Dict, Union
 
 load_dotenv()
@@ -13,8 +15,8 @@ token_duration_minutes = 15
 
 def create_token(login: LoginDto) -> str:
     data = login.dict()
-    # expiration = datetime.now() + timedelta(minutes=token_duration_minutes)
-    # data.update({"exp": expiration})
+    expiration = datetime.now(tz=timezone.utc) + timedelta(minutes=token_duration_minutes)
+    data.update({"exp": expiration})
     token: str = encode(payload=data, key=secretKey, algorithm="HS256")
     return token
 

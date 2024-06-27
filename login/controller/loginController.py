@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from config.configDatabase import get_db
-from login.loginDto import LoginDto
+from login.schema.loginDto import LoginDto
 from login.loginService import LoginService
 
 loginRouter = APIRouter()

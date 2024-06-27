@@ -1,8 +1,10 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from user.model.user import User
 from user.schema.userDto import UserRequestDto, UserResponseDto
 from user.repository.userRepository import UserRepository
+from middlewares.bcrypt import hash_password
 
 
 class UserService:
@@ -17,6 +19,8 @@ class UserService:
 
         if usernameExist:
             raise HTTPException(status_code=409, detail='Username already registered')
+
+        new_user.password = hash_password(new_user.password)
 
         return UserRepository(db).create_user(new_user)
 
@@ -67,3 +71,10 @@ class UserService:
             raise HTTPException(status_code=404, detail='User not found')
 
         return UserRepository(db).delete_user(userExist)
+
+    @staticmethod
+    def user_exist_by_email(self, db: Session, email: str) -> User:
+        user = UserRepository(db).userExist(email)
+        if not user:
+            raise HTTPException(status_code=401, detail="User does not exist")
+        return user

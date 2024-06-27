@@ -4,7 +4,7 @@ from category.controller.categoryController import categoryRouter
 from middlewares.error_handler import ErrorHandler
 from user.controller.userController import userRouter
 from movie.controller.movieController import movieRouter
-from login.loginController import loginRouter
+from login.controller.loginController import loginRouter
 
 app = FastAPI()
 app.title = 'Estudiando FastApi'

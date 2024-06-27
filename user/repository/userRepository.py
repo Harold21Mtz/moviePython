@@ -1,5 +1,6 @@
 from starlette import status
 
+from login.schema.loginDto import LoginDto
 from user.model.user import User
 from user.schema.userDto import UserRequestDto
 
@@ -38,3 +39,9 @@ class UserRepository:
         self.db.delete(user)
         self.db.commit()
         return {"Message": "User deleted", "status_code": status.HTTP_200_OK}
+
+    def userExist(self, email):
+        return self.db.query(User).filter(User.email == email).first()
+
+    def login(self, login: LoginDto):
+        return self.db.query(User).filter(User.email == login.email, User.password == login.password).first()

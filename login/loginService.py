@@ -1,20 +1,16 @@
 from fastapi import HTTPException
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from starlette.responses import JSONResponse
 
-from login.loginDto import LoginDto
-from login.loginRepository import LoginRepository
+from login.schema.loginDto import LoginDto
 from middlewares.jwt_manager import create_token
+from middlewares.bcrypt import verify_password
+from user.service.userService import UserService
 
 
 class LoginService:
     def login(self, db: Session, login: LoginDto) -> dict:
-        user = LoginRepository(db).userExist(login.email)
-        userValid = LoginRepository(db).login(login)
-        if not user:
-            raise HTTPException(status_code=401, detail="User does not exist")
-        if user.password != login.password:
+        user = UserService.user_exist_by_email(self, db, login.email)
+        if not verify_password(login.password, user.password):
             raise HTTPException(status_code=401, detail="Email or password is incorrect")
 
         return {"token": create_token(login)}
